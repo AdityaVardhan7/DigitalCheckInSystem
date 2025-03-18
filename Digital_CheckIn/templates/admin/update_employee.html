@@ -1,0 +1,93 @@
+{% extends "admin/sidebar.html" %} {% block content %}
+{% load static %}
+
+
+
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4 justify-content-center">
+        <div class="col-sm-12 col-xl-12">
+            <div class="bg-light rounded h-100 p-4">
+                <h6 class="mb-4">Update Employee</h6>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">Username</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="text-danger">{{ form.username.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_first_name" class="form-label">First Name</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        <div class="text-danger">{{ form.first_name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_last_name" class="form-label">Last Name</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        <div class="text-danger">{{ form.last_name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_email" class="form-label">Email</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="text-danger">{{ form.email.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_profile_image" class="form-label">Profile Image</label>
+                    {% if employee.user.profile.profile_image %}
+                        <img src="{{ employee.user.profile.profile_image.url }}" alt="Profile Image" width="100" height="100"><br>
+                    {% endif %}
+                    {{ form.profile_image }}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_contact" class="form-label">Contact</label>
+                    {{ form.contact }}
+                    {% if form.contact.errors %}
+                        <div class="text-danger">{{ form.contact.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_dep" class="form-label">Department</label>
+                    {{ form.dep }}
+                    {% if form.department.errors %}
+                        <div class="text-danger">{{ form.department.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_role" class="form-label">Role</label>
+                    {{ form.role }}
+                    {% if form.role.errors %}
+                        <div class="text-danger">{{ form.role.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_status" class="form-label">Status</label>
+                    {{ form.status }}
+                    {% if form.status.errors %}
+                        <div class="text-danger">{{ form.status.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-success">Update Employee</button>
+                <a href="{% url 'employees' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
