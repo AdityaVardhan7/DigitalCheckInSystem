@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Detection with DeepFace</title>
+    <style>
+        #webcam {
+            border: 2px solid #000;
+            width: 640px;
+            height: 480px;
+        }
+        #result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Real-time Face Detection and Encoding</h1>
+    <div id="webcam-container">
+        <video id="webcam" autoplay></video>
+        <button id="capture-button">Capture Image</button>
+    </div>
+    
+    <div id="result">
+        <h3>Face Encoding:</h3>
+        <pre id="face-encoding"></pre>
+    </div>
+
+    <!-- CSRF token setup -->
+    <script>
+        // Function to get CSRF token from cookie
+        function getCSRFToken() {
+            let csrfToken = null;
+            const cookies = document.cookie.split(';');
+            cookies.forEach(function(cookie) {
+                if (cookie.trim().startsWith('csrftoken=')) {
+                    csrfToken = cookie.trim().split('=')[1];
+                }
+            });
+            return csrfToken;
+        }
+    </script>
+
+    <script>
+        // Access the webcam
+        const videoElement = document.getElementById("webcam");
+        const captureButton = document.getElementById("capture-button");
+        const faceEncodingElement = document.getElementById("face-encoding");
+
+        // Set up webcam streaming
+        async function startWebcam() {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            videoElement.srcObject = stream;
+        }
+        
+        startWebcam();
+
+        // Capture the current frame and send it to the server
+        captureButton.addEventListener("click", async () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(videoElement, 0, 0);
+
+            // Convert canvas to image data
+            canvas.toBlob(async function(blob) {
+                const formData = new FormData();
+                formData.append('image', blob, 'captured_image.jpg');
+
+                const csrfToken = getCSRFToken();  // Get CSRF token
+
+                const response = await fetch('/process_image/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken  // Add CSRF token to the request header
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.encoding) {
+                    faceEncodingElement.textContent = JSON.stringify(data.encoding, null, 2);
+                } else {
+                    faceEncodingElement.textContent = 'No face detected or confidence too low';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

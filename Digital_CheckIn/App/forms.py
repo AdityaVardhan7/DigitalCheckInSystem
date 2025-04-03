@@ -69,9 +69,10 @@ class EmployeeForm(forms.ModelForm):
         empty_label="Select Department",
         widget=forms.Select(attrs={'class': 'form-control'}),
     )
-    role = forms.CharField(
-        max_length=50,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter role'}),
+    role = forms.ChoiceField(
+        choices=[('', 'Select Role')] + Employee.ROLE_CHOICES,  # Add a default option
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=False  # Allow null values
     )
     status = forms.ChoiceField(
         choices=[("Active", "Active"), ("Inactive", "Inactive")],
@@ -84,3 +85,24 @@ class EmployeeForm(forms.ModelForm):
             'username', 'first_name', 'last_name', 'email', 'password',
             'profile_image', 'contact', 'dep', 'role', 'status'
         ]
+
+
+
+class LeaveApplicationForm(forms.ModelForm):
+    class Meta:
+        model = Leaves
+        fields = ['start_date', 'end_date', 'reason']
+        widgets = {
+            'start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'reason': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter reason for leave'}),
+        }
+
+class ApologyForm(forms.ModelForm):
+    class Meta:
+        model = Apology
+        fields = ['date', 'reason']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'reason': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Enter your reason...'}),
+        }

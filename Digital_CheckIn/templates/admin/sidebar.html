@@ -37,6 +37,7 @@
         new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
     }
 </script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 
@@ -70,7 +71,7 @@
                         <h6 class="mb-0">{{ user.first_name |default:"User" }} {{ user.last_name }}</h6>
 
                         
-                        <span>{{ employee.role  }} (Admin) </span>
+                        <span>{{ user.employee.role | default:"Admin" }}    </span>
                     </div>
                 </div>
                 <div class="navbar-nav w-100">
@@ -79,10 +80,10 @@
                     <a href="/employees" class="nav-item nav-link {% if request.path in '/employees/ /add-employee/' %}active{% endif %}">
                         <i class="fa fa-users me-2"></i>Employees
                     </a>                    
-                    <a href="/face-recognition/" class="nav-item nav-link {% if request.path == '/face-recognition/' %}active {%endif%}"><i class="fa fa-user-check me-2"></i>Face Recognition</a>
-                    <a href="" class="nav-item nav-link"><i class="fa fa-book-open me-2"></i>Mannual Override</a>
-                    <a href="" class="nav-item nav-link"><i class="fa fa-frown me-2"></i>Apologies</a>
-                    <a href="" class="nav-item nav-link"><i class="fa fa-sign-out-alt me-1"></i> Leaves</a>
+                    <a href="/capture-attendance/" class="nav-item nav-link {% if request.path == '/capture-attendance/' %}active {%endif%}"><i class="fa fa-user-check me-2"></i>Face Recognition</a>
+                    <a href="/mannual" class="nav-item nav-link {% if request.path == '/mannual/' %}active {%endif%}"><i class="fa fa-book-open me-2"></i>Mannual Override</a>
+                    <a href="/apologies/" class="nav-item nav-link {% if request.path == '/apologies/' %}active {%endif%}"><i class="fa fa-frown me-2"></i>Apologies</a>
+                    <a href="/leaves/" class="nav-item nav-link {% if request.path == '/leaves/' %}active {%endif%}"><i class="fa fa-sign-out-alt me-1"></i> Leaves</a>
                     <a href="/admin-attendance/" class="nav-item nav-link {% if request.path == '/admin-attendance/' %}active {%endif%}"><i class="fa fa-clipboard-list me-2"></i>Attendance Report</a>
                     <a href="/departments" class="nav-item nav-link {% if request.path in '/departments/ /add-department/' %}active {%endif%}"><i class="fa fa-sitemap me-2"></i>Departments</a>
                     
@@ -96,7 +97,7 @@
             <!-- Navbar Start -->
             <nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
                 <a href="" class="navbar-brand d-flex d-lg-none me-4">
-                    <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
+                    <img src="{% static 'img/logo.png' %}" alt="Digital CheckIn" style="height: 40px;">
                 </a>
                 <a href="#" class="sidebar-toggler flex-shrink-0">
                     <i class="fa fa-bars"></i>
@@ -118,7 +119,7 @@
                             <span class="d-none d-lg-inline-flex"> {{ user.first_name |default:"User" }} {{ user.last_name }} </span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                            <a href="/admin-profile/" class="dropdown-item">My Profile</a>
+                            <a href="/profile/" class="dropdown-item">My Profile</a>
                             <!-- <a href="#" class="dropdown-item">Settings</a> -->
                             <a href="/logout" class="dropdown-item">Log Out</a>
                         </div>
@@ -183,6 +184,7 @@
 
     <!-- Template Javascript -->
     <script src="{% static 'js/main.js' %}"></script>
+
 </body>
 
 </html>      

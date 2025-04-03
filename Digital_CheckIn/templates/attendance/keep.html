@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">  <!-- CSRF Token -->
+</head>
+<body>
+    <h1>Face Recognition System</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+    <button id="capture">Capture & Recognize</button>
+    <p id="result">Waiting for match...</p>
+
+    <script>
+        // Access the webcam
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const captureBtn = document.getElementById("capture");
+        const resultText = document.getElementById("result");
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => video.srcObject = stream)
+            .catch(err => console.error("Error accessing webcam: ", err));
+
+        captureBtn.addEventListener("click", () => {
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert image to base64
+            const imageData = canvas.toDataURL("image/jpeg");
+
+            // Get the CSRF token from meta tag
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+
+            // Send to Django backend with CSRF token
+            fetch("/recognize/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken  // Add CSRF token here
+                },
+                body: JSON.stringify({ image: imageData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.match) {
+                    resultText.innerText = `Match Found: ${data.match}`;
+                } else {
+                    resultText.innerText = "Face Not Recognized";
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>

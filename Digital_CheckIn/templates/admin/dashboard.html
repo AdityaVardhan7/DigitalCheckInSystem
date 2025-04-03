@@ -1,21 +1,18 @@
 {% extends "admin/sidebar.html" %} {% block content %}
 {% load static %}
-
-
-
             <!-- Sale & Revenue Start -->
             <div class="container-fluid pt-4 px-4">
                 <div class="row g-4">
-                    <div class="col-sm-6 col-xl-4">
+                    <div class="col-sm-6 col-xl-3">
                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-users fa-3x text-primary"></i>
                             <div class="ms-3">
-                                <p class="mb-2">Total Active Employees</p>
+                                <p class="mb-2">Employees</p>
                                 <h6 class="mb-0">{{total_employees}}</h6>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-xl-4">
+                    <div class="col-sm-6 col-xl-3">
                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-check-circle fa-3x text-success"></i>
                             <div class="ms-3">
@@ -24,7 +21,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-xl-4">
+                    <div class="col-sm-6 col-xl-3">
                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-times-circle fa-3x text-danger"></i>
                             <div class="ms-3">
@@ -33,36 +30,47 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+                            <i class="fa fa-user-clock fa-3x text-warning"></i>
+                            <div class="ms-3">
+                                <p class="mb-2">Not Reported</p>
+                                <h6 class="mb-0">{{not_reported}}</h6>
+                            </div>
+                        </div>
+                    </div>
                     
                 </div>
             </div>
             <!-- Sale & Revenue End -->
+            
+            
+            
 
-
-            <!-- Sales Chart Start -->
+            <!-- Weekly Attendance Bar Chart -->
             <div class="container-fluid pt-4 px-4">
                 <div class="row g-4">
                     <div class="col-sm-12 col-xl-6">
                         <div class="bg-light text-center rounded p-4">
                             <div class="d-flex align-items-center justify-content-between mb-4">
-                                <h6 class="mb-0">Week Attendance </h6>
-                                
+                                <h6 class="mb-0">Week Attendance</h6>
                             </div>
-                            <canvas ></canvas>
+                            <div id="weekAttendanceChart" style="width:100%;"></div>
                         </div>
                     </div>
+                    
+                    <!-- Monthly Attendance Area Chart -->
                     <div class="col-sm-12 col-xl-6">
                         <div class="bg-light text-center rounded p-4">
                             <div class="d-flex align-items-center justify-content-between mb-4">
                                 <h6 class="mb-0">Month Attendance</h6>
-                                
                             </div>
-                            <canvas ></canvas>
+                            <div id="monthAttendanceChart" style="width:100%; "></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Sales Chart End -->       
+                 
 
 
             <!-- Widgets Start -->
@@ -72,15 +80,35 @@
                         <div class="h-100 bg-light rounded p-4">
                             <div class="d-flex align-items-center justify-content-between mb-2">
                                 <h6 class="mb-0">Recent Attendance</h6>
-                                <a href="">Show All</a>
+                                <a href="/admin-attendance/">Show All</a>
                             </div>
-                            <div class="d-flex align-items-center border-bottom py-3">
-                                <div class="w-100 ms-3">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-0">Reethu Karnati</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                </div>
+                            <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Time</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>                           
+                                
+                                        {% for att in recent_attendance %}
+                                        <tr>
+                                            <td><h6 class="mb-0">{{ att.name }}</h6></td>
+                                            <td>
+                                                <small>{{ att.time_ago }}</small>
+                                            </td>
+                                        </tr>
+                                        
+                                        {% empty %}
+                                        
+                                        <tr><td colspan="2" class="text-center"><h6 class="mb-0">No recent attendance</h6></td></tr>
+                                            
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                 
+                                
                             </div>
                             
                             
@@ -90,18 +118,23 @@
                     <div class="col-sm-12 col-md-6 col-xl-4">
                         <div class="h-100 bg-light rounded p-4">
                             <div class="d-flex align-items-center justify-content-between mb-2">
-                                <h6 class="mb-0">Recent Aplogies</h6>
-                                <a href="">Show All</a>
+                                <h6 class="mb-0">Recent Leaves</h6>
+                                <a href="/leaves/">Show All</a>
                             </div>
-                            <div class="d-flex align-items-center border-bottom py-3">
-                                <div class="w-100 ms-3">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-0">Reethu Karnati</h6>
-                                        <small>15 minutes ago</small>
+                            {% for leave in recent_leaves %}
+                                <div class="d-flex align-items-center border-bottom py-2">
+                                    <div class="w-100 ms-3">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-0">{{ leave.name }}</h6>
+                                            <small>- {{ leave.time_ago }}</small>
+                                        </div>
+                                        <span>{{ leave.reason|truncatechars:50 }}</span>
                                     </div>
                                 </div>
-                            </div>
-                            
+                                
+                                {% empty %}
+                                <h6 class="mb-0">No recent leave requests</h6>
+                            {% endfor %}
                             
                         </div>
                     </div>                    
@@ -120,6 +153,64 @@
             </div>
             <!-- Widgets End -->
 
-
-
+            
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    // Get the data from the template
+                    var weekLabels = {{ week_labels|safe }};
+                    var weekPresent = {{ week_present|safe }};
+                    var weekAbsent = {{ week_absent|safe }};
+                    var weekNotReported = {{ week_not_reported|safe }};
+                    
+                    var monthLabels = {{ month_labels|safe }};
+                    var monthPresent = {{ month_present|safe }};
+                    var monthAbsent = {{ month_absent|safe }};
+                    var monthNotReported = {{ month_not_reported|safe }};
+            
+                    // Weekly Attendance Chart
+                    var weekLayout = {
+                        xaxis: { title: 'Days of the Week' },
+                        yaxis: { title: 'Attendance' },
+                        barmode: 'stack',
+                        plot_bgcolor: '#F3F6F9',
+                        paper_bgcolor: '#F3F6F9',
+                        responsive: true  // ✅ Makes the chart responsive
+                        
+                    };
+            
+                    var weekData = [
+                        { x: weekLabels, y: weekPresent, type: 'bar', name: 'Present', marker: { color: 'rgb(54, 162, 235)' } },
+                        { x: weekLabels, y: weekAbsent, type: 'bar', name: 'Absent', marker: { color: 'rgb(255, 99, 132)' } },
+                        { x: weekLabels, y: weekNotReported, type: 'bar', name: 'Not Reported', marker: { color: 'rgb(75, 192, 192)' } }
+                    ];
+            
+                    Plotly.newPlot('weekAttendanceChart', weekData, weekLayout);
+            
+                    // Monthly Attendance Chart
+                    var monthLayout = {
+                        xaxis: { title: 'Weeks' },
+                        yaxis: { title: 'Attendance' },
+                        mode: 'lines+markers',
+                        plot_bgcolor: '#F3F6F9',
+                        paper_bgcolor: '#F3F6F9',
+                        responsive: true  // ✅ Makes the chart responsive
+                    };
+            
+                    var monthData = [
+                        { x: monthLabels, y: monthPresent, type: 'scatter', mode: 'lines+markers', name: 'Present', fill: 'tonexty', marker: { color: 'rgb(54, 162, 235)' } },
+                        { x: monthLabels, y: monthAbsent, type: 'scatter', mode: 'lines+markers', name: 'Absent', fill: 'tonexty', marker: { color: 'rgb(255, 99, 132)' } },
+                        // { x: monthLabels, y: monthNotReported, type: 'scatter', mode: 'lines+markers', name: 'Not Reported', fill: 'tonexty', marker: { color: 'rgb(75, 192, 192)' } }
+                    ];
+            
+                    Plotly.newPlot('monthAttendanceChart', monthData, monthLayout);
+            
+                    // ✅ Handle window resize event to maintain responsiveness
+                    window.onresize = function() {
+                        Plotly.Plots.resize('weekAttendanceChart');
+                        Plotly.Plots.resize('monthAttendanceChart');
+                    };
+                });
+            </script>
+            
 {% endblock content %}
+

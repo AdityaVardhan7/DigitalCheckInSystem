@@ -1,32 +1,47 @@
 {% extends "admin/sidebar.html" %} {% block content %}
 {% load static %}
 
-
-<h2>Attendance List</h2>
-
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Employee Name</th>
-                <th>Department</th>
-                <th>Date</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for attendance in attendances %}
-                <tr>
-                    <td>{{ attendance.emp.user.first_name }} {{ attendance.emp.user.last_name }}</td>
-                    <td>{{ attendance.emp.dep.name }}</td>
-                    <td>{{ attendance.date }}</td>
-                    <td>{{ attendance.status }}</td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="4">No attendance records found.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-6">
+            <h4>Attendance List</h4>
+        </div>
+        <div class="col-6">
+            <a href="{% url 'export_attendance' %}" class="btn btn-success mb-4">Export to Excel</a>
+        </div>
+    </div> 
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-12">
+            <div class="bg-light rounded h-100 p-4">
+                
+                <div class="table-responsive">
+                    <table class="table text-start align-middle table-bordered table-hover mb-0">
+                        <thead style="background-color: #009CFF; color: white;">
+                            <tr>
+                                <th class="col">Employee Name</th>
+                                <th class="col">Department</th>
+                                <th class="col">Date & Time</th>
+                                <th class="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for attendance in attendances %}
+                                <tr>
+                                    <td>{{ attendance.emp.user.first_name }} {{ attendance.emp.user.last_name }}</td>
+                                    <td>{{ attendance.emp.dep.name }}</td>
+                                    <td>{{ attendance.timestamp|date:"Y-m-d H:i:s" }}</td>
+                                    <td>{{ attendance.status }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4">No attendance records found.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}

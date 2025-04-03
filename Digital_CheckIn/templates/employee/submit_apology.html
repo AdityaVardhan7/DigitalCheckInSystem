@@ -1,0 +1,26 @@
+{% extends 'employee/sidebar.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Update an Apology</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Apology Date</label>
+            {{ form.date }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Reason</label>
+            {{ form.reason }}
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "admin/sidebar.html" %} 
+{% block content %}
+{% load static %}
+
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-12">
+            <div class="bg-light rounded h-100 p-4">
+                <div class="row g-4">
+                    <div class="col-sm-5 col-xl-5">
+                        <h4>Attendance Override for </h4>
+                    </div>
+                    <div class="col-sm-7 col-xl-7">
+                        <form method="GET" action="{% url 'mannual' %}">
+                            <div class="row g-4">
+                                <div class="col-sm-8 col-xl-8">
+                                    <label for="attendance_date">Date:</label>
+                                    <input type="date" id="attendance_date" name="date" class="form-control" value="{{ selected_date }}" required>
+                                </div>
+                            <div class="col-sm-4 col-xl-4">
+                                <button type="submit" class="btn btn-primary mt-2">Filter</button>
+                            </div>
+                        </form>
+                        
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table text-start align-middle table-bordered table-hover mb-0">
+                    <thead style="background-color: orange; color: white;">
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Full Name</th>
+                            <th>Department</th>
+                            <th>Role</th>
+                            <th>Attendance Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for employee in employee_status %}
+                            <tr>
+                                <td>{{ employee.id }}</td>
+                                <td>{{ employee.name }}</td>
+                                <td>{{ employee.department }}</td>
+                                <td>{{ employee.role }}</td>
+                                <td style="color: 
+                                    {% if employee.status == 'Present' %}green
+                                    {% elif employee.status == 'Absent' %}red
+                                    {% else %}orange
+                                    {% endif %};">
+                                    <a href="{% url 'toggle_attendance' employee.id %}" 
+                                    class="btn btn-sm 
+                                    {% if employee.status == 'Present' %}btn-outline-success
+                                    {% elif employee.status == 'Absent' %}btn-outline-danger
+                                    {% else %}btn-outline-warning
+                                    {% endif %}" 
+                                    onclick="return confirm('Are you sure you want to change attendance status for this employee?');">
+                                    {{ employee.status }}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5">No employees are absent today.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </div>            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set the default value of the date input field to today's date
+    document.addEventListener("DOMContentLoaded", function () {
+        let today = new Date().toISOString().split('T')[0];
+        document.getElementById("attendance_date").value = today;
+    });
+</script>
+
+{% endblock content %}
